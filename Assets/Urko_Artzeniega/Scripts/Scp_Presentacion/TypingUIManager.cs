@@ -50,11 +50,10 @@ public class TypingUIManager : MonoBehaviour
         {
             GameManager.Instance.AddScore(10);
 
-            // Método actualizado para versiones recientes de Unity
             FindFirstObjectByType<PlayerController>().Jump();
 
             currentTargetWord = "";
-            targetWordText.text = "¡OSO ONDO!";
+            targetWordText.text = "¡BIEN!";
             inputWordText.text = "";
         }
         else if (!currentTargetWord.StartsWith(currentInput))

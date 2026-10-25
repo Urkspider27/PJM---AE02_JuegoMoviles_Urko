@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     {
         if (isGrounded)
         {
+            Time.timeScale = 1f; // Restaura la velocidad normal del juego al saltar
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0);
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             isGrounded = false;
