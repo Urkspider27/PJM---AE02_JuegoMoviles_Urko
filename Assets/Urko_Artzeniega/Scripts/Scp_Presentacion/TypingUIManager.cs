@@ -1,5 +1,7 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class TypingUIManager : MonoBehaviour
 {
@@ -8,8 +10,12 @@ public class TypingUIManager : MonoBehaviour
     public TMP_Text targetWordText;
     public TMP_Text inputWordText;
 
+    [Header("UI Buttons")]
+    public Button restartButton;
+
     private string currentTargetWord = "";
     private string currentInput = "";
+    private bool isWaitingForInput = false;
 
     void Start()
     {
@@ -19,6 +25,12 @@ public class TypingUIManager : MonoBehaviour
 
         targetWordText.text = "";
         inputWordText.text = "";
+
+        if (restartButton != null)
+        {
+            restartButton.gameObject.SetActive(false);
+            restartButton.onClick.AddListener(RestartGame);
+        }
     }
 
     void OnDestroy()
@@ -37,17 +49,19 @@ public class TypingUIManager : MonoBehaviour
         currentInput = "";
         targetWordText.text = currentTargetWord;
         inputWordText.text = "";
+        isWaitingForInput = true;
     }
 
     public void AddLetter(string letter)
     {
-        if (string.IsNullOrEmpty(currentTargetWord)) return;
+        if (!isWaitingForInput || string.IsNullOrEmpty(currentTargetWord)) return;
 
         currentInput += letter.ToUpper();
         inputWordText.text = currentInput;
 
         if (currentInput == currentTargetWord)
         {
+            isWaitingForInput = false;
             GameManager.Instance.AddScore(10);
 
             FindFirstObjectByType<PlayerController>().Jump();
@@ -70,7 +84,21 @@ public class TypingUIManager : MonoBehaviour
 
     void HandleGameOver()
     {
+        isWaitingForInput = false;
         targetWordText.text = "GAME OVER";
+        targetWordText.color = Color.red;
+
+        if (restartButton != null)
+        {
+            restartButton.gameObject.SetActive(true);
+        }
+
         Time.timeScale = 0f;
+    }
+
+    public void RestartGame()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
